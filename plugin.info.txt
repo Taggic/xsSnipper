@@ -1,0 +1,9 @@
+# PLUGIN INFO - DO NOT EDIT!
+
+base    xssnipper
+author  Taggic
+email   taggic@t-online.de
+date    2011-12-21
+name    xssnipper
+desc    provides syntax plugin to retrieve code snippeds from files
+url     http://www.dokuwiki.org/plugin:mysnipper
