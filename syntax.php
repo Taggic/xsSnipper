@@ -66,6 +66,18 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
         if (!$params) {
           msg('Syntax of xssnipper detected but an unknown parameter was attached.', -1);          
         }
+        elseif($params[0] == ''){
+          //             0      1            2              3
+          // {(xssnipper>,[start line],[type] [file],<c>[content]</c>)}
+          $params = explode(",",$match,4);
+          $xssnipper                = array();
+          $xssnipper['filepath']    = '';
+          $xssnipper['from']        = $params[1];
+          $alpha                    = explode(' ',$params[2]);
+          $xssnipper['type']        = $alpha[0];
+          $xssnipper['file']        = $alpha[1];
+          $xssnipper['code']        = $params[3];
+        }
         else { 
           // Values
           $xssnipper                = array();
@@ -75,8 +87,8 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $alpha                    = explode(' ',$params[3]);
           $xssnipper['type']        = $alpha[0];
           $xssnipper['file']        = $alpha[1];
-          return $xssnipper;
         }        
+        return $xssnipper;
      }
 /******************************************************************************/
 /* render output
@@ -84,58 +96,62 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
 */   
     function render($mode, &$renderer, $xssnipper) {
         global $ID;
+        if(!$xssnipper['type'])  $xssnipper['type']='txt';
+        if($this->_codeblock<1)  $this->_codeblock=1;
 
-        if(!$xssnipper['type']) $xssnipper['type']='txt';
-        if(!$xssnipper['file']) $xssnipper['file']= basename($xssnipper['filepath']);
-        if(!$xssnipper['file']) $xssnipper['file']='snippet.'.$xssnipper['type'];
-        if(!$simplesnipper['until']) $simplesnipper['until'] = count($records);
-        if($this->_codeblock<1) $this->_codeblock=1;
-
-    // 1. check if $xssnipper['filepath'] exist, else error message
-        if(!file_exists($xssnipper['filepath'])) {
-          msg('file '.$xssnipper['filepath'].' not found',-1);
-          return false;
+        if($xssnipper['filepath']=='') {
+           $code_lines = $xssnipper['code'];
         }
-    
-    // 2. open the file in read mode
-        $records    = file($xssnipper['filepath']);
-
-    // 3. load the file content from line = $xssnipper['from'] , to line = $xssnipper['until']  into $code_lines
-        if(!$xssnipper['until']) $xssnipper['until']=count($records);
-        foreach ($records as $line_num => $line) {
-            if(($line_num>=$xssnipper['from']-1) && ($line_num<=$xssnipper['until']-2))
-                $code_lines .= $line;
-            if ($line_num>$xssnipper['until']) break;
-        }
-
-        $geshi = new GeSHi($code_lines, $xssnipper['type']);
-        $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
-        $geshi->set_overall_class('xssnipper');
-        $geshi->set_header_type(GESHI_HEADER_DIV);
-        $geshi->start_line_numbers_at($xssnipper['from']);
-
-        $xs_path = '?do=export_code&id='.$ID;
-        $text = $geshi->parse_code();
-        
-        $code_block .= NL.NL.'
-        <dl class="code">
-          <dt>
-            <a href="'.$xs_path.'&codeblock='.$this->_codeblock.'" title="Download Snippet" class="mediafile mf_'.$xssnipper['type'].'">'.$xssnipper['file'].'</a>
-          </dt>
-          <dd>'.$text.'</dd>
-        </dl>'.NL.NL;         
-    
-       $renderer->doc .= $code_block;
-
-       if($this->_codeblock == $_REQUEST['codeblock']){
-          header("Content-Type: text/plain; charset=utf-8");
-          header("Content-Disposition: attachment; filename=".trim($xssnipper['file']));
-          header("X-Robots-Tag: noindex");
-          header("Pragma: public"); 
-          echo trim($code_lines,"\r\n");
-          exit;
-        }
-       $this->_codeblock++; 
+        else {
+          if(!$xssnipper['file'])  $xssnipper['file']= basename($xssnipper['filepath']);
+          if(!$xssnipper['file'])  $xssnipper['file']='snippet.'.$xssnipper['type'];
+      
+      // 1. check if $xssnipper['filepath'] exist, else error message
+          if(!file_exists($xssnipper['filepath'])) {
+            msg('file '.$xssnipper['filepath'].' not found',-1);
+            return false;
+          }
+      
+      // 2. open the file in read mode
+          $records    = file($xssnipper['filepath']);
+      
+      // 3. load the file content from line = $xssnipper['from'] , to line = $xssnipper['until']  into $code_lines
+          if(!$xssnipper['until']) $xssnipper['until']=count($records);
+          foreach ($records as $line_num => $line) {
+              if(($line_num>=$xssnipper['from']-1) && ($line_num<=$xssnipper['until']-2))
+                  $code_lines .= $line;
+              if ($line_num>$xssnipper['until']) break;
+          }
+      }
+      $geshi = new GeSHi($code_lines, $xssnipper['type']);
+      $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+      $geshi->set_overall_class('xssnipper');
+      $geshi->set_header_type(GESHI_HEADER_DIV);
+      //        $geshi->set_header_type(GESHI_HEADER_PRE_TABLE);
+      $geshi->start_line_numbers_at($xssnipper['from']);
+      
+      $xs_path = '?do=export_code&id='.$ID;
+      $text = $geshi->parse_code();
+      
+      $code_block .= NL.NL.'
+      <dl class="code">
+        <dt>
+          <a href="'.$xs_path.'&codeblock='.$this->_codeblock.'" title="Download Snippet" class="mediafile mf_'.$xssnipper['type'].'">'.$xssnipper['file'].'</a>
+        </dt>
+        <dd style="display : none;">'.$code_lines.'</dd>'.$text.'
+      </dl>'.NL;         
+       
+      $renderer->doc .= $code_block;
+      
+      if($this->_codeblock == $_REQUEST['codeblock']){
+        header("Content-Type: text/plain; charset=utf-8");
+        header("Content-Disposition: attachment; filename=".trim($xssnipper['file']));
+        header("X-Robots-Tag: noindex");
+        header("Pragma: public"); 
+        echo trim($code_lines,"\r\n");
+        exit;
+      }
+      $this->_codeblock++; 
 
     }
 }

@@ -5,6 +5,9 @@
   div.xssnipper {
     border: 1px dashed #a0a0a0;
     background: #f0f0f0;
+  	border-radius:               5px;
+  	box-shadow:         3px 3px #CECECE;
+
   }
   
   div.xssnipper ol {
@@ -26,4 +29,13 @@
   	color: #000000;
   	padding:5px 0;
   	margin:0px;
+  }
+  
+  table.xssnipper {
+    background:#f0f0f0 !important;
+    border: 1px dashed #a0a0a0;
+    max-width: 100% !important;
+  }
+  table.xssnipper pre {
+    border: 0  !important;
   }
