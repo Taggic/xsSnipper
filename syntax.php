@@ -75,8 +75,8 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $xssnipper['from']        = $params[1];
           $alpha                    = explode(' ',$params[2]);
           $xssnipper['type']        = $alpha[0];
-          $xssnipper['file']        = $alpha[1];
-          $xssnipper['block']       = $alpha[2];
+          $xssnipper['file']        = $alpha[2];
+          $xssnipper['block']       = $alpha[1];
           $xssnipper['code']        = $params[3];
         }
         else { 
@@ -87,8 +87,8 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $xssnipper['until']       = $params[2];
           $alpha                    = explode(' ',$params[3]);
           $xssnipper['type']        = $alpha[0];
-          $xssnipper['file']        = $alpha[1];
-          $xssnipper['block']       = $alpha[2];
+          $xssnipper['file']        = $alpha[2];
+          $xssnipper['block']       = $alpha[1];
         }        
         return $xssnipper;
      }
