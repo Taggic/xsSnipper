@@ -75,8 +75,8 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $xssnipper['from']        = $params[1];
           $alpha                    = explode(' ',$params[2]);
           $xssnipper['type']        = $alpha[0];
-          $xssnipper['file']        = $alpha[2];
-          $xssnipper['block']       = $alpha[1];
+          $xssnipper['file']        = $alpha[1];
+          $xssnipper['block']       = $alpha[2];
           $xssnipper['code']        = $params[3];
         }
         else { 
@@ -87,8 +87,8 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $xssnipper['until']       = $params[2];
           $alpha                    = explode(' ',$params[3]);
           $xssnipper['type']        = $alpha[0];
-          $xssnipper['file']        = $alpha[2];
-          $xssnipper['block']       = $alpha[1];
+          $xssnipper['file']        = $alpha[1];
+          $xssnipper['block']       = $alpha[2];
         }        
         return $xssnipper;
      }
@@ -149,7 +149,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
             $img_ID        = 'img_'.$clipclap_id;
             $clipclap_img .= '<img id="'.$img_ID.'"
                                    src="'.DOKU_BASE.'lib/plugins/xssnipper/images/enfold.png" 
-                                   alt="show" />'.NL;
+                                   alt="show"  />'.NL;
                     
             $code_block .= '<span id="'.$clipclap_id.'" style="display : none;">'.NL;
             $clipclap_flag = true;    
@@ -159,7 +159,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
         
         if($clipclap_flag == true) {
             $code_block .= '</span>'.NL;
-            $code_block .= '<div class="img_clipclap" onClick="span_open(\''.$clipclap_id.'\',\''.$img_ID.'\')"></div>'.NL;
+            $code_block .= '<div class="img_clipclap" title="view code" id="'.$clipclap_id.'2" onClick="span_open(\''.$clipclap_id.'\',\''.$img_ID.'\')"></div>'.NL;
         }
       $code_block .= '</dl>'.NL;         
        
