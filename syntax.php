@@ -64,7 +64,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
         
         
         if (!$params) {
-          msg('Syntax of xssnipper detected but an unknown parameter was attached.', -1);          
+          msg('Syntax of xssnipper detected but parameter missing.', -1);          
         }
         elseif($params[0] == ''){
           //             0      1            2              3
@@ -76,6 +76,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $alpha                    = explode(' ',$params[2]);
           $xssnipper['type']        = $alpha[0];
           $xssnipper['file']        = $alpha[1];
+          $xssnipper['block']       = $alpha[2];
           $xssnipper['code']        = $params[3];
         }
         else { 
@@ -87,6 +88,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
           $alpha                    = explode(' ',$params[3]);
           $xssnipper['type']        = $alpha[0];
           $xssnipper['file']        = $alpha[1];
+          $xssnipper['block']       = $alpha[2];
         }        
         return $xssnipper;
      }
@@ -137,9 +139,29 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
       <dl class="code">
         <dt>
           <a href="'.$xs_path.'&codeblock='.$this->_codeblock.'" title="Download Snippet" class="mediafile mf_'.$xssnipper['type'].'">'.$xssnipper['file'].'</a>
-        </dt>
-        <dd style="display : none;">'.$code_lines.'</dd>'.$text.'
-      </dl>'.NL;         
+        </dt>';
+       
+        // returns the javascript function for clip-clap of block if downloadblock is used
+        $clipclap_flag = false;
+        if($xssnipper['block']) {
+            $code_block .= '<br />'.$this->__scripts_html();
+            $clipclap_id   = microtime();
+            $img_ID        = 'img_'.$clipclap_id;
+            $clipclap_img .= '<img id="'.$img_ID.'"
+                                   src="'.DOKU_BASE.'lib/plugins/xssnipper/images/enfold.png" 
+                                   alt="show" />'.NL;
+                    
+            $code_block .= '<span id="'.$clipclap_id.'" style="display : none;">'.NL;
+            $clipclap_flag = true;    
+        }
+  
+        $code_block .= '<dd style="display : none;">'.$code_lines.'</dd>'.$text.NL;
+        
+        if($clipclap_flag == true) {
+            $code_block .= '</span>'.NL;
+            $code_block .= '<div class="img_clipclap" onClick="span_open(\''.$clipclap_id.'\',\''.$img_ID.'\')"></div>'.NL;
+        }
+      $code_block .= '</dl>'.NL;         
        
       $renderer->doc .= $code_block;
       
@@ -153,6 +175,22 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
       }
       $this->_codeblock++; 
 
+    }
+/******************************************************************************/
+    function __scripts_html()  {
+        $ret .=  '<span><script>
+             function span_open(blink_id, img_id) 
+              {   if (document.getElementById(blink_id).style.display == "block")
+                  {   document.getElementById(blink_id).style.display = "none";
+                      document.getElementById(img_id).style.backgroundPosition = "0px 0px";
+                  }
+                  else
+                  {   document.getElementById(blink_id).style.display = "block";
+                      document.getElementById(img_id).style.backgroundPosition = "0px -19px";
+                  }
+              } 
+        </script></span>'.NL;
+        return $ret;
     }
 }
 ?>

@@ -39,3 +39,11 @@
   table.xssnipper pre {
     border: 0  !important;
   }
+  
+.img_clipclap {
+  background-image:url(images/enfold.png);
+  background-repeat:no-repeat;
+  height:19px;
+  background-position: 0 0;
+  margin-left: 2em;
+  }
