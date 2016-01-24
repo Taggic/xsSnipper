@@ -44,7 +44,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
 /******************************************************************************/
 /* handle the match
 */   
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
         global $ID;
         $match = substr($match,strlen('{(xssnipper>'),-2); //strip markup from start and end
 
@@ -96,7 +96,7 @@ class syntax_plugin_xssnipper extends DokuWiki_Syntax_Plugin {
 /* render output
 * @author Taggic <taggic@t-online.de>
 */   
-    function render($mode, &$renderer, $xssnipper) {
+    function render($mode, Doku_Renderer $renderer, $xssnipper) {
         global $ID;
         if(!$xssnipper['type'])  $xssnipper['type']='txt';
         if($this->_codeblock<1)  $this->_codeblock=1;
