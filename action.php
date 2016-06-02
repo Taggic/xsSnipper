@@ -17,7 +17,7 @@ class action_plugin_xssnipper extends DokuWiki_Action_Plugin {
     function getInfo() {
         return array (
             'author' => 'Heiko Barth',
-            'date' => '2010-03-02',
+            'date' => '2016-06-02',
             'name' => 'Toolbar Code Button',
             'desc' => 'Inserts a code button into the toolbar',
             'url' => 'http://www.heiko-barth.de/download.php?id=dw_codebutton',
@@ -27,7 +27,7 @@ class action_plugin_xssnipper extends DokuWiki_Action_Plugin {
     /**
      * Register the eventhandlers
      */
-    function register(&$controller) {
+    function register(Doku_Event_Handler &$controller) {
         $controller->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_button', array ());
     }
  
